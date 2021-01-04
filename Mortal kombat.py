@@ -9,6 +9,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
 btn_sprites = pygame.sprite.Group()
+fighters_sprites = pygame.sprite.Group()
 
 
 def load_image(name, colorkey=None):
@@ -32,7 +33,7 @@ def terminate():
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, font, line, text_coord, x, function):
+    def __init__(self, font, line, y, x, function):
         super().__init__(btn_sprites)
         self.color = pygame.Color(0, 0, 0)
         self.hsv = self.color.hsva
@@ -41,7 +42,7 @@ class Button(pygame.sprite.Sprite):
         self.font = font
         self.string_rendered = font.render(line, True, pygame.Color('red'), self.color)
         self.intro_rect = self.string_rendered.get_rect()
-        self.intro_rect.top = text_coord
+        self.intro_rect.top = y
         self.intro_rect.x = x
         self.rect = pygame.Rect(self.intro_rect[0],
                                 self.intro_rect[1],
@@ -68,12 +69,20 @@ class Button(pygame.sprite.Sprite):
                                                         self.color)
                 self.image.blit(self.string_rendered, (0, 0))
                 screen.blit(self.image, self.intro_rect)
+            elif args[-1] == 'fight' and self.function in ['back', 'Китана', 'Горо',
+                                                           'Скорпион', 'Скарлет', 'Саб-зиро', 'Шао-кан']:
+                self.string_rendered = self.font.render(self.line, True, pygame.Color('red'),
+                                                        self.color)
+                self.image.blit(self.string_rendered, (0, 0))
+                screen.blit(self.image, self.intro_rect)
         elif args and args[0].type == pygame.MOUSEBUTTONDOWN and args[0].button == 1 and \
                 self.rect.collidepoint(args[0].pos):
             if self.function == 'ii':
-                pass
+                screen.fill(pygame.Color('black'))
+                choice_fighters_screen()
             elif self.function == 'two':
-                pass
+                screen.fill(pygame.Color('black'))
+                choice_fighters_screen()
             elif self.function == 'fatality':
                 screen.fill(pygame.Color('black'))
                 fatality_screen()
@@ -120,6 +129,53 @@ def fatality_screen():
                 btn_sprites.update(event, 'fatal')
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 btn_sprites.update(event, 'fatal')
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+class ChoiceFighter(pygame.sprite.Sprite):
+    def __init__(self, fighter, coord):
+        super().__init__(fighters_sprites)
+        self.image_fighter = pygame.transform.scale(load_image(fighter), (150, 130))
+        self.image = self.image_fighter
+        self.rect = self.image_fighter.get_rect()
+
+        self.rect.x = coord[0]
+        self.rect.y = coord[1]
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(args[0].pos):
+            pass
+
+
+def choice_fighters_screen():
+    list_fighters = [('Kitana_unfas.jpeg', (210, 0), 'Китана'),
+                     ('Goro_unfas.jpg', (210, 155), 'Горо'),
+                     ('Scarlet_unfas.jpg', (210, 310), 'Скарлет'),
+                     ('Scorpion_unfas.jpg', (380, 0), 'Скорпион'),
+                     ('Shao_kan_unfas.jpg', (380, 155), 'Шао-кан'),
+                     ('Sub-zero_unfas.jpg', (380, 310), 'Саб-зиро')]
+    fon = pygame.transform.scale(load_image('Choice_fighter.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+    run = True
+    font = pygame.font.Font(None, 35)
+    for fighter in list_fighters:
+        ChoiceFighter(fighter[0], fighter[1])
+        Button(font, fighter[-1], fighter[1][1] + 130, fighter[1][0], fighter[-1])
+    fighters_sprites.draw(screen)
+    font = pygame.font.Font(None, 40)
+    text_coord = 440
+    Button(font, 'Назад', text_coord, 10, 'back')
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.MOUSEMOTION:
+                btn_sprites.update(event, 'fight')
+                fighters_sprites.update(event)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                btn_sprites.update(event, 'fight')
+                fighters_sprites.update(event)
         pygame.display.flip()
         clock.tick(FPS)
 
