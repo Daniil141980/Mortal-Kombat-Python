@@ -123,12 +123,12 @@ def start_screen():
 
 
 def fatality_screen():
-    list_fighters = [('Kitana_unfas.jpeg', (210, 0), 'DANYA'),
-                     ('Goro_unfas.jpg', (210, 155), 'A A A A A'),
-                     ('Scarlet_unfas.jpg', (210, 310), 'C C C C C'),
-                     ('Scorpion_unfas.jpg', (380, 0), 'LOH'),
-                     ('Shao_kan_unfas.jpg', (380, 155), 'B B B B B'),
-                     ('Sub-zero_unfas.jpg', (380, 310), 'D D D D D')]
+    list_fighters = [('Kitana_unfas.jpeg', (210, 0), 'Китана'),
+                     ('Goro_unfas.jpg', (210, 155), 'Горо'),
+                     ('Raiden_unfas.jpg', (210, 310), 'Рейден'),
+                     ('Scorpion_unfas.jpg', (380, 0), 'Скорпион'),
+                     ('Shao_kan_unfas.jpg', (380, 155), 'Шао-кан'),
+                     ('Sub-zero_unfas.jpg', (380, 310), 'Саб-зиро')]
     fon = pygame.transform.scale(load_image('Fatalities_background.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 32)
@@ -170,7 +170,7 @@ class ChoiceFighter(pygame.sprite.Sprite):
 def choice_fighters_screen():
     list_fighters = [('Kitana_unfas.jpeg', (210, 0), 'Китана'),
                      ('Goro_unfas.jpg', (210, 155), 'Горо'),
-                     ('Scarlet_unfas.jpg', (210, 310), 'Скарлет'),
+                     ('Raiden_unfas.jpg', (210, 310), 'Рейден'),
                      ('Scorpion_unfas.jpg', (380, 0), 'Скорпион'),
                      ('Shao_kan_unfas.jpg', (380, 155), 'Шао-кан'),
                      ('Sub-zero_unfas.jpg', (380, 310), 'Саб-зиро')]
