@@ -19,6 +19,12 @@ TEST2 = ''
 PLAYER1 = ['', False]
 PLAYER2 = ['', False]
 
+pygame.mixer.init()
+menu_music = pygame.mixer.Sound('music_and_sounds\main_theme.mp3')
+click_sound = pygame.mixer.Sound('music_and_sounds\click_sound.mp3')
+pygame.mixer.Sound.set_volume(menu_music, 0.01)
+pygame.mixer.Sound.play(menu_music)
+
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('pictures', name)
@@ -79,6 +85,8 @@ class Button(pygame.sprite.Sprite):
             self.image = self.string_rendered
         elif args and args[0].type == pygame.MOUSEBUTTONDOWN and \
                 self.rect.collidepoint(args[0].pos):
+            pygame.mixer.Sound.set_volume(click_sound, 0.5)
+            pygame.mixer.Sound.play(click_sound)
             if self.function == 'ii':
                 screen.fill(pygame.Color('black'))
                 del_sprite(btn_sprites.sprites())
@@ -167,8 +175,19 @@ def start_screen():
 
 
 def fatality_screen():
+    list_fighters = [('Kitana_unfas.jpeg', (210, 0), 'Китана'),
+                     ('Goro_unfas.jpg', (210, 155), 'Горо'),
+                     ('Raiden_unfas.jpg', (210, 310), 'Рейден'),
+                     ('Scorpion_unfas.jpg', (380, 0), 'Скорпион'),
+                     ('Shao_kan_unfas.jpg', (380, 155), 'Шао-кан'),
+                     ('Sub-zero_unfas.jpg', (380, 310), 'Саб-зиро')]
     fon = pygame.transform.scale(load_image('Fatalities_background.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 32)
+    for fighter in list_fighters:
+        ChoiceFighter(fighter[0], fighter[1])
+        Button(font, fighter[-1], fighter[1][1] + 130, fighter[1][0], fighter[-1])
+    fighters_sprites.draw(screen)
     run = True
     font = pygame.font.Font(None, 40)
     text_coord = 440
