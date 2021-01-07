@@ -3,6 +3,7 @@ import sys
 import os
 
 pygame.init()
+pygame.mixer.init()
 FPS = 60
 WIDTH, HEIGHT = 765, 475
 FON = ['', False]
@@ -19,9 +20,8 @@ TEST2 = ''
 PLAYER1 = ['', False]
 PLAYER2 = ['', False]
 
-pygame.mixer.init()
-menu_music = pygame.mixer.Sound('music_and_sounds\main_theme.mp3')
-click_sound = pygame.mixer.Sound('music_and_sounds\click_sound.mp3')
+menu_music = pygame.mixer.Sound('music_and_sounds/main_theme.mp3')
+click_sound = pygame.mixer.Sound('music_and_sounds/click_sound.mp3')
 pygame.mixer.Sound.set_volume(menu_music, 0.01)
 pygame.mixer.Sound.play(menu_music)
 
@@ -105,7 +105,7 @@ class Button(pygame.sprite.Sprite):
                 del_sprite(something_image.sprites())
                 del_sprite(fighters_sprite.sprites())
                 del_sprite(animated_sprites.sprites())
-                non_player()
+                non_player_fon()
                 start_screen()
             elif self in fighters_sprite:
                 if PLAYER1[1] is True:
@@ -185,9 +185,9 @@ def fatality_screen():
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 32)
     for fighter in list_fighters:
-        ChoiceFighter(fighter[0], fighter[1])
+        SomethingImage(fighter[0], fighter[1], (150, 130))
         Button(font, fighter[-1], fighter[1][1] + 130, fighter[1][0], fighter[-1])
-    fighters_sprites.draw(screen)
+    something_image.draw(screen)
     run = True
     font = pygame.font.Font(None, 40)
     text_coord = 440
@@ -205,12 +205,13 @@ def fatality_screen():
         clock.tick(FPS)
 
 
-def non_player():
-    global TEST1, TEST2, PLAYER1, PLAYER2
+def non_player_fon():
+    global TEST1, TEST2, PLAYER1, PLAYER2, FON
     TEST1 = ''
     TEST2 = ''
     PLAYER1 = ['', False]
     PLAYER2 = ['', False]
+    FON = ['', False]
 
 
 class SomethingImage(pygame.sprite.Sprite):
