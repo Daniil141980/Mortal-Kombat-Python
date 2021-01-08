@@ -228,6 +228,8 @@ class SomethingImage(pygame.sprite.Sprite):
         global FON
         if args and args[0].type == pygame.MOUSEBUTTONDOWN and \
                 self.rect.collidepoint(args[0].pos):
+            pygame.mixer.Sound.set_volume(click_sound, 0.5)
+            pygame.mixer.Sound.play(click_sound)
             FON[0] = self.picture
 
 
