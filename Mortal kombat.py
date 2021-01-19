@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 from random import choice
+from threading import Timer
 
 pygame.init()
 pygame.mixer.init()
@@ -31,9 +32,28 @@ HP_1 = 100
 HP_2 = 100
 
 menu_music = pygame.mixer.Sound('music_and_sounds/main_theme.mp3')
+music1 = pygame.mixer.Sound("music_and_sounds/Mortal Kombat - Jade's Theme.mp3")
+pygame.mixer.Sound.set_volume(music1, 0.01)
+music2 = pygame.mixer.Sound("music_and_sounds/Mortal Kombat - 8 Bit.mp3")
+pygame.mixer.Sound.set_volume(music2, 0.01)
+music3 = pygame.mixer.Sound("music_and_sounds/toshiro-masuda-glued-state.mp3")
+pygame.mixer.Sound.set_volume(music3, 0.01)
+
 click_sound = pygame.mixer.Sound('music_and_sounds/click_sound.mp3')
 pygame.mixer.Sound.set_volume(menu_music, 0.01)
-pygame.mixer.Sound.play(menu_music)
+pygame.mixer.Sound.play(menu_music, loops=99)
+
+
+def timeover():
+    global HP_1
+    global HP_2
+    if HP_1 >= HP_2:
+        HP_2 = 0
+    elif HP_2 < HP_1:
+        HP_1 = 0
+
+
+fight_timer = Timer(99, timeover)
 
 
 def load_image(name, colorkey=None):
@@ -651,6 +671,15 @@ def blood(x, y):
 
 
 def fight_screen():
+    fight_timer.start()
+    music_randomizer = choice([1, 2, 3])
+    pygame.mixer.Sound.stop(menu_music)
+    if music_randomizer == 1:
+        pygame.mixer.Sound.play(music1, loops=99)
+    elif music_randomizer == 2:
+        pygame.mixer.Sound.play(music2, loops=99)
+    else:
+        pygame.mixer.Sound.play(music3, loops=99)
     global HP_1, HP_2
     fon = pygame.transform.scale(load_image(FON[0]), (WIDTH, HEIGHT))
     draw_icon()
