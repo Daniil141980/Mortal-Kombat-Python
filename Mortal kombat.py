@@ -40,6 +40,9 @@ music3 = pygame.mixer.Sound("music_and_sounds/toshiro-masuda-glued-state.mp3")
 pygame.mixer.Sound.set_volume(music3, 0.01)
 
 click_sound = pygame.mixer.Sound('music_and_sounds/click_sound.mp3')
+hit_sound1 = pygame.mixer.Sound('music_and_sounds/kick1.mp3')
+hit_sound2 = pygame.mixer.Sound('music_and_sounds/kick2.mp3')
+
 pygame.mixer.Sound.set_volume(menu_music, 0.01)
 pygame.mixer.Sound.play(menu_music, loops=99)
 
@@ -49,11 +52,11 @@ def timeover():
     global HP_2
     if HP_1 >= HP_2:
         HP_2 = 0
-    elif HP_2 < HP_1:
+    elif HP_2 > HP_1:
         HP_1 = 0
 
 
-fight_timer = Timer(99, timeover)
+fight_timer = Timer(60, timeover)
 
 
 def load_image(name, colorkey=None):
@@ -274,12 +277,12 @@ def start_screen():
 
 
 def fatality_screen():
-    list_fighters = [('Kitana_unfas.jpg', (210, 0), 'Китана'),
-                     ('Goro_unfas.jpg', (210, 155), 'Горо'),
-                     ('Raiden_unfas.jpg', (210, 310), 'Рейден'),
-                     ('Scorpion_unfas.jpg', (380, 0), 'Скорпион'),
-                     ('Shao_kan_unfas.jpg', (380, 155), 'Шао-кан'),
-                     ('Sub-zero_unfas.jpg', (380, 310), 'Саб-зиро')]
+    list_fighters = [('Kitana_unfas.jpg', (210, 0), 'FGH'),
+                     ('Goro_unfas.jpg', (210, 155), 'GHF'),
+                     ('Raiden_unfas.jpg', (210, 310), 'GFH'),
+                     ('Scorpion_unfas.jpg', (380, 0), 'FHG'),
+                     ('Shao_kan_unfas.jpg', (380, 155), 'HGF'),
+                     ('Sub-zero_unfas.jpg', (380, 310), 'HFG')]
     fon = pygame.transform.scale(load_image('Fatalities_background.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 32)
@@ -821,6 +824,11 @@ def fight_screen():
             fight_animation_player1.draw(screen)
             fight_animation_player1.update((False, 'end', 0))
         elif flag_hitting_1:
+#            kick_sound_randomizer = choice([1, 2])
+#            if kick_sound_randomizer == 1:
+#                pygame.mixer.Sound.play(hit_sound1)
+#            else:
+ #               pygame.mixer.Sound.play(hit_sound2)
             if flag_static_1 != 'hitting':
                 flag_static_1 = 'hitting'
                 del_sprite(fight_animation_player1)
@@ -839,6 +847,7 @@ def fight_screen():
                 count_end_hitting_1 = 1
             hitting_count_1 += 1
         elif flag_hit_hand_1:
+            pygame.mixer.Sound.play(hit_sound1)
             if flag_static_1 != 'hit_hand':
                 flag_static_1 = 'hit_hand'
                 del_sprite(fight_animation_player1)
