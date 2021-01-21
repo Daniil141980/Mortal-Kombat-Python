@@ -847,7 +847,6 @@ def fight_screen():
                 count_end_hitting_1 = 1
             hitting_count_1 += 1
         elif flag_hit_hand_1:
-            pygame.mixer.Sound.play(hit_sound1)
             if flag_static_1 != 'hit_hand':
                 flag_static_1 = 'hit_hand'
                 del_sprite(fight_animation_player1)
@@ -873,6 +872,7 @@ def fight_screen():
                         HP_2 -= 5
 
                 flag_hit_hand_1 = False
+                pygame.mixer.Sound.play(hit_sound1)
                 if PLAYER1[0] == 'Горо':
                     count_hit_hand_1 = 4
                 else:
@@ -904,6 +904,7 @@ def fight_screen():
                         HP_2 -= 5
 
                 flag_hit_leg_1 = False
+                pygame.mixer.Sound.play(hit_sound2)
                 if PLAYER1[0] == 'Горо':
                     count_hit_leg_1 = 3
                 else:
