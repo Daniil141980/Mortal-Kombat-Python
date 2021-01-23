@@ -1045,6 +1045,7 @@ def fight_screen():
                         HP_1 -= 5
 
                 flag_hit_hand_2 = False
+                pygame.mixer.Sound.play(hit_sound1)
                 if PLAYER2[0] == 'Горо':
                     count_hit_hand_2 = 4
                 else:
@@ -1076,6 +1077,7 @@ def fight_screen():
                         HP_1 -= 5
 
                 flag_hit_leg_2 = False
+                pygame.mixer.Sound.play(hit_sound2)
                 if PLAYER2[0] == 'Горо':
                     count_hit_leg_2 = 3
                 else:
