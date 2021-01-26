@@ -1,8 +1,8 @@
 import pygame
 import sys
-import os
 from random import choice
 from threading import Timer
+from Load import load_image
 
 pygame.init()
 pygame.mixer.init()
@@ -59,22 +59,6 @@ def timeover():
 
 
 fight_timer = Timer(60, timeover)
-
-
-def load_image(name, colorkey=None):
-    fullname = os.path.join('pictures', name)
-    if not os.path.isfile(fullname):
-        print(f'File {fullname} not found')
-        sys.exit()
-    image = pygame.image.load(fullname)
-    if colorkey is not None:
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
-    else:
-        image = image.convert_alpha()
-    return image
-
 
 dict_fighters = {'Скорпион': (load_image('Scorpion_special.png'), 6, 1, -5, 100),
                  'Горо': (load_image('Goro_special.png'), 7, 1, -15, 100),
