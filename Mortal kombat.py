@@ -28,6 +28,8 @@ TEST2 = ''
 PLAYER1 = ['', False]
 PLAYER2 = ['', False]
 
+FATALITY = ''
+
 HP_1 = 100
 HP_2 = 100
 
@@ -150,6 +152,27 @@ dict_fighters_hit_leg = {'Скорпион': (load_image('Scorpion_hit_leg.png')
                          'Саб-зиро': (load_image('Sub_hit_leg.png', colorkey=-1), 2),
                          'Рейден': (load_image('Raiden_hit_leg.png', colorkey=-1), 2)}
 
+dict_fatal_fighters = {'Китана': 'FGH',
+                       'Горо': 'GHF',
+                       'Рейден': 'GFH',
+                       'Скорпион': 'FHG',
+                       'Шао-кан': 'HGF',
+                       'Саб-зиро': 'HFG'}
+
+dict_fighters_fatal_win = {'Скорпион': (load_image('Scorpion_fatal_win.png'), 6),
+                           'Горо': (load_image('Goro_fatal_win.png'), 2),
+                           'Китана': (load_image('Kitana_fatal_win.png', colorkey=-1), 3),
+                           'Шао-кан': (load_image('Shao_fatal_win.png'), 3),
+                           'Саб-зиро': (load_image('Sub_fatal_win.png', colorkey=-1), 3),
+                           'Рейден': (load_image('Raiden_fatal_win.png', colorkey=-1), 2)}
+
+dict_fighters_fatal_die = {'Скорпион': (load_image('Scorpion_fatal_die.png'), 5),
+                           'Горо': (load_image('Goro_fatal_die.png'), 1),
+                           'Китана': (load_image('Kitana_fatal_die.png', colorkey=-1), 5),
+                           'Шао-кан': (load_image('Shao_fatal_die.png'), 3),
+                           'Саб-зиро': (load_image('Sub_fatal_die.png', colorkey=-1), 5),
+                           'Рейден': (load_image('Raiden_fatal_die.png', colorkey=-1), 5)}
+
 
 def terminate():
     pygame.quit()
@@ -246,6 +269,8 @@ class Button(pygame.sprite.Sprite):
                 del_sprite(animated_sprites.sprites())
                 del_sprite(something_image.sprites())
                 fight_screen()
+            elif self.function == 'exit':
+                terminate()
 
 
 def del_sprite(sprites):
@@ -255,7 +280,8 @@ def del_sprite(sprites):
 
 def start_screen():
     intro_text = [("Играть", 330, 'two'),
-                  ("Список фаталити", 265, 'fatality')]
+                  ("Список фаталити", 265, 'fatality'),
+                  ("Выйти", 330, 'exit')]
     fon = pygame.transform.scale(load_image('Menu_backround.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 40)
@@ -598,7 +624,8 @@ class AnimationForFight(pygame.sprite.Sprite):
                 self.cur_frame = (self.cur_frame + 1) % len(self.frames)
                 if self.player == 2:
                     self.image = pygame.transform.flip(
-                        pygame.transform.scale(self.frames[self.cur_frame], (135, 210)), True, False)
+                        pygame.transform.scale(self.frames[self.cur_frame],
+                                               (135, 210)), True, False)
                 else:
                     self.image = pygame.transform.scale(self.frames[self.cur_frame], (135, 210))
         elif change[1] == 'block':
@@ -606,7 +633,8 @@ class AnimationForFight(pygame.sprite.Sprite):
                 self.cur_frame = (self.cur_frame + 1) % len(self.frames)
                 if self.player == 2:
                     self.image = pygame.transform.flip(
-                        pygame.transform.scale(self.frames[self.cur_frame], (135, 210)), True, False)
+                        pygame.transform.scale(self.frames[self.cur_frame],
+                                               (135, 210)), True, False)
                 else:
                     self.image = pygame.transform.scale(self.frames[self.cur_frame], (135, 210))
         elif change[1] == 'hit':
@@ -614,7 +642,8 @@ class AnimationForFight(pygame.sprite.Sprite):
                 self.cur_frame = (self.cur_frame + 1) % len(self.frames)
                 if self.player == 2:
                     self.image = pygame.transform.flip(
-                        pygame.transform.scale(self.frames[self.cur_frame], (135, 210)), True, False)
+                        pygame.transform.scale(self.frames[self.cur_frame],
+                                               (135, 210)), True, False)
                 else:
                     self.image = pygame.transform.scale(self.frames[self.cur_frame], (135, 210))
         elif change[1] == 'hitting':
@@ -622,7 +651,8 @@ class AnimationForFight(pygame.sprite.Sprite):
                 self.cur_frame = (self.cur_frame + 1) % len(self.frames)
                 if self.player == 2:
                     self.image = pygame.transform.flip(
-                        pygame.transform.scale(self.frames[self.cur_frame], (135, 210)), True, False)
+                        pygame.transform.scale(self.frames[self.cur_frame],
+                                               (135, 210)), True, False)
                 else:
                     self.image = pygame.transform.scale(self.frames[self.cur_frame], (135, 210))
         elif self.count % 9 == 0:
@@ -674,6 +704,7 @@ def blood(x, y):
 
 
 def fight_screen():
+    global HP_1, HP_2, FATALITY
     fight_timer.start()
     music_randomizer = choice([1, 2, 3])
     pygame.mixer.Sound.stop(menu_music)
@@ -683,7 +714,6 @@ def fight_screen():
         pygame.mixer.Sound.play(music2, loops=99)
     else:
         pygame.mixer.Sound.play(music3, loops=99)
-    global HP_1, HP_2
     fon = pygame.transform.scale(load_image(FON[0]), (WIDTH, HEIGHT))
     draw_icon()
     screen.blit(fon, (0, 0))
@@ -785,6 +815,18 @@ def fight_screen():
                 flag_block_2 = True
             elif event.type == pygame.KEYUP and event.key == pygame.K_p:
                 flag_block_2 = False
+            if key[pygame.K_f]:
+                if HP_1 <= 0 or HP_2 <= 0:
+                    if len(FATALITY) == 0 or FATALITY[-1] != 'F':
+                        FATALITY += 'F'
+            elif key[pygame.K_g]:
+                if HP_1 <= 0 or HP_2 <= 0:
+                    if len(FATALITY) == 0 or FATALITY[-1] != 'G':
+                        FATALITY += 'G'
+            elif key[pygame.K_h]:
+                if HP_1 <= 0 or HP_2 <= 0:
+                    if len(FATALITY) == 0 or FATALITY[-1] != 'H':
+                        FATALITY += 'H'
         screen.blit(fon, (0, 0))
         draw_icon()
         btn_sprites.draw(screen)
@@ -812,6 +854,32 @@ def fight_screen():
                                                               + field.top, 1))
             fight_animation_player1.draw(screen)
             fight_animation_player1.update((False, 'block', 0))
+        elif HP_1 <= 0 and dict_fatal_fighters[PLAYER2[0]] in FATALITY:
+            if flag_static_1 != 'fatal_die':
+                flag_static_1 = 'fatal_die'
+                del_sprite(fight_animation_player1)
+                fight_animation_player1.add(AnimationForFight(dict_fighters_fatal_die
+                                                              [PLAYER1[0]][0],
+                                                              dict_fighters_fatal_die
+                                                              [PLAYER1[0]][1],
+                                                              1, x_pos_1 * field.cell_size,
+                                                              y_pos_1 * field.cell_size
+                                                              + field.top, 1))
+            fight_animation_player1.draw(screen)
+            fight_animation_player1.update((False, 'end', 0))
+        elif HP_2 <= 0 and dict_fatal_fighters[PLAYER1[0]] in FATALITY:
+            if flag_static_1 != 'fatal_win':
+                flag_static_1 = 'fatal_win'
+                del_sprite(fight_animation_player1)
+                fight_animation_player1.add(AnimationForFight(dict_fighters_fatal_win
+                                                              [PLAYER1[0]][0],
+                                                              dict_fighters_fatal_win
+                                                              [PLAYER1[0]][1],
+                                                              1, x_pos_1 * field.cell_size,
+                                                              y_pos_1 * field.cell_size
+                                                              + field.top, 1))
+            fight_animation_player1.draw(screen)
+            fight_animation_player1.update((False, 'end', 0))
         elif HP_1 <= 0:
             if flag_static_1 != 'end':
                 flag_static_1 = 'end'
@@ -824,11 +892,6 @@ def fight_screen():
             fight_animation_player1.draw(screen)
             fight_animation_player1.update((False, 'end', 0))
         elif flag_hitting_1:
-#            kick_sound_randomizer = choice([1, 2])
-#            if kick_sound_randomizer == 1:
-#                pygame.mixer.Sound.play(hit_sound1)
-#            else:
- #               pygame.mixer.Sound.play(hit_sound2)
             if flag_static_1 != 'hitting':
                 flag_static_1 = 'hitting'
                 del_sprite(fight_animation_player1)
@@ -850,8 +913,10 @@ def fight_screen():
             if flag_static_1 != 'hit_hand':
                 flag_static_1 = 'hit_hand'
                 del_sprite(fight_animation_player1)
-                fight_animation_player1.add(AnimationForFight(choice(dict_fighters_hit_hand[PLAYER1[0]][:2]),
-                                                              dict_fighters_hit_hand[PLAYER1[0]][2],
+                fight_animation_player1.add(AnimationForFight(choice(dict_fighters_hit_hand
+                                                                     [PLAYER1[0]][:2]),
+                                                              dict_fighters_hit_hand
+                                                              [PLAYER1[0]][2],
                                                               1, x_pos_1 * field.cell_size,
                                                               y_pos_1 * field.cell_size
                                                               + field.top, 1))
@@ -882,8 +947,10 @@ def fight_screen():
             if flag_static_1 != 'hit_leg':
                 flag_static_1 = 'hit_leg'
                 del_sprite(fight_animation_player1)
-                fight_animation_player1.add(AnimationForFight(dict_fighters_hit_leg[PLAYER1[0]][0],
-                                                              dict_fighters_hit_leg[PLAYER1[0]][1],
+                fight_animation_player1.add(AnimationForFight(dict_fighters_hit_leg
+                                                              [PLAYER1[0]][0],
+                                                              dict_fighters_hit_leg
+                                                              [PLAYER1[0]][1],
                                                               1, x_pos_1 * field.cell_size,
                                                               y_pos_1 * field.cell_size
                                                               + field.top, 1))
@@ -990,6 +1057,32 @@ def fight_screen():
                                                               + field.top, 2))
             fight_animation_player2.draw(screen)
             fight_animation_player2.update((False, 'block', 0))
+        elif HP_2 <= 0 and dict_fatal_fighters[PLAYER1[0]] in FATALITY:
+            if flag_static_2 != 'fatal_die':
+                flag_static_2 = 'fatal_die'
+                del_sprite(fight_animation_player2)
+                fight_animation_player2.add(AnimationForFight(dict_fighters_fatal_die
+                                                              [PLAYER2[0]][0],
+                                                              dict_fighters_fatal_die
+                                                              [PLAYER2[0]][1],
+                                                              1, x_pos_2 * field.cell_size,
+                                                              y_pos_2 * field.cell_size
+                                                              + field.top, 2))
+            fight_animation_player2.draw(screen)
+            fight_animation_player2.update((False, 'end', 0))
+        elif HP_1 <= 0 and dict_fatal_fighters[PLAYER2[0]] in FATALITY:
+            if flag_static_2 != 'fatal_win':
+                flag_static_2 = 'fatal_win'
+                del_sprite(fight_animation_player2)
+                fight_animation_player2.add(AnimationForFight(dict_fighters_fatal_win
+                                                              [PLAYER2[0]][0],
+                                                              dict_fighters_fatal_win
+                                                              [PLAYER2[0]][1],
+                                                              1, x_pos_2 * field.cell_size,
+                                                              y_pos_2 * field.cell_size
+                                                              + field.top, 2))
+            fight_animation_player2.draw(screen)
+            fight_animation_player2.update((False, 'end', 0))
         elif HP_2 <= 0:
             if flag_static_2 != 'end':
                 flag_static_2 = 'end'
@@ -1023,8 +1116,10 @@ def fight_screen():
             if flag_static_2 != 'hit_hand':
                 flag_static_2 = 'hit_hand'
                 del_sprite(fight_animation_player2)
-                fight_animation_player2.add(AnimationForFight(choice(dict_fighters_hit_hand[PLAYER2[0]][:2]),
-                                                              dict_fighters_hit_hand[PLAYER2[0]][2],
+                fight_animation_player2.add(AnimationForFight(choice(dict_fighters_hit_hand
+                                                                     [PLAYER2[0]][:2]),
+                                                              dict_fighters_hit_hand
+                                                              [PLAYER2[0]][2],
                                                               1, x_pos_2 * field.cell_size,
                                                               y_pos_2 * field.cell_size
                                                               + field.top, 2))
@@ -1055,8 +1150,10 @@ def fight_screen():
             if flag_static_2 != 'hit_leg':
                 flag_static_2 = 'hit_leg'
                 del_sprite(fight_animation_player2)
-                fight_animation_player2.add(AnimationForFight(dict_fighters_hit_leg[PLAYER2[0]][0],
-                                                              dict_fighters_hit_leg[PLAYER2[0]][1],
+                fight_animation_player2.add(AnimationForFight(dict_fighters_hit_leg
+                                                              [PLAYER2[0]][0],
+                                                              dict_fighters_hit_leg
+                                                              [PLAYER2[0]][1],
                                                               1, x_pos_2 * field.cell_size,
                                                               y_pos_2 * field.cell_size
                                                               + field.top, 2))
